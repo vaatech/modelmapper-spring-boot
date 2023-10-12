@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>modelmapper-spring-boot-parent</artifactId>
-        <groupId>com.github.vaatech.modelmapper</groupId>
+        <groupId>io.github.vaatech.modelmapper</groupId>
         <version>1.0.0</version>
         <relativePath>../modelmapper-spring-boot-parent</relativePath>
     </parent>
