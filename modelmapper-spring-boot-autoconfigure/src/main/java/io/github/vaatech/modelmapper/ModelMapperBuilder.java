@@ -126,6 +126,18 @@ public class ModelMapperBuilder {
         return apply(typeMapConfigurer);
     }
 
+    public <S, D> ModelMapperBuilder converter(Converter<S, D> converter) {
+        ConverterConfigurer<S, D> converterConfigurer = new ConverterConfigurer<>();
+        apply(converterConfigurer.with(converter));
+        return this;
+    }
+
+    public <S, D> ModelMapperBuilder mappings(PropertyMap<S, D> propertyMap) {
+        PropertyMapConfigurer<S, D> propertyMapConfigurer = new PropertyMapConfigurer<>();
+        apply(propertyMapConfigurer.with(propertyMap));
+        return this;
+    }
+
     public ModelMapperBuilder provider(Provider<?> provider) {
         this.provider = provider;
         return this;
