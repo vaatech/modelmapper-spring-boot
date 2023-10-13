@@ -12,8 +12,7 @@ import java.util.function.Function;
 class ModelMapperBuilderStandardConfiguration {
 
     @Bean
-    StandardModelMapperBuilderCustomizer standardModelMapperBuilderCustomizer(
-            ModelMapperProperties modelMapperProperties) {
+    StandardModelMapperBuilderCustomizer standardModelMapperBuilderCustomizer(ModelMapperProperties modelMapperProperties) {
         return new StandardModelMapperBuilderCustomizer(modelMapperProperties);
     }
 
@@ -31,26 +30,25 @@ class ModelMapperBuilderStandardConfiguration {
 
         @Override
         public void customize(ModelMapperBuilder builder) {
-            builder.configuration(
-                    cnf -> {
-                        nullSafeSet(ModelMapperProperties::getDestinationNameTokenizer, cnf::setDestinationNameTokenizer);
-                        nullSafeSet(ModelMapperProperties::getSourceNameTokenizer, cnf::setSourceNameTokenizer);
-                        nullSafeSet(ModelMapperProperties::getDestinationNameTransformer, cnf::setDestinationNameTransformer);
-                        nullSafeSet(ModelMapperProperties::getSourceNameTransformer, cnf::setSourceNameTransformer);
-                        nullSafeSet(ModelMapperProperties::getDestinationNamingConvention, cnf::setDestinationNamingConvention);
-                        nullSafeSet(ModelMapperProperties::getSourceNamingConvention, cnf::setSourceNamingConvention);
-                        nullSafeSet(ModelMapperProperties::getMatchingStrategy, cnf::setMatchingStrategy);
-                        nullSafeSet(ModelMapperProperties::getFieldAccessLevel, cnf::setFieldAccessLevel);
-                        nullSafeSet(ModelMapperProperties::getMethodAccessLevel, cnf::setMethodAccessLevel);
-                        nullSafeSet(ModelMapperProperties::getFieldMatchingEnabled, cnf::setFieldMatchingEnabled);
-                        nullSafeSet(ModelMapperProperties::getAmbiguityIgnored, cnf::setAmbiguityIgnored);
-                        nullSafeSet(ModelMapperProperties::getFullTypeMatchingRequired, cnf::setFullTypeMatchingRequired);
-                        nullSafeSet(ModelMapperProperties::getImplicitMatchingEnabled, cnf::setImplicitMappingEnabled);
-                        nullSafeSet(ModelMapperProperties::getPreferNestedProperties, cnf::setPreferNestedProperties);
-                        nullSafeSet(ModelMapperProperties::getSkipNullEnabled, cnf::setSkipNullEnabled);
-                        nullSafeSet(ModelMapperProperties::getCollectionsMergeEnabled, cnf::setCollectionsMergeEnabled);
-                        nullSafeSet(ModelMapperProperties::getDeepCopyEnabled, cnf::setDeepCopyEnabled);
-                    });
+            builder.configuration(cnf -> {
+                nullSafeSet(ModelMapperProperties::getDestinationNameTokenizer, cnf::setDestinationNameTokenizer);
+                nullSafeSet(ModelMapperProperties::getSourceNameTokenizer, cnf::setSourceNameTokenizer);
+                nullSafeSet(ModelMapperProperties::getDestinationNameTransformer, cnf::setDestinationNameTransformer);
+                nullSafeSet(ModelMapperProperties::getSourceNameTransformer, cnf::setSourceNameTransformer);
+                nullSafeSet(ModelMapperProperties::getDestinationNamingConvention, cnf::setDestinationNamingConvention);
+                nullSafeSet(ModelMapperProperties::getSourceNamingConvention, cnf::setSourceNamingConvention);
+                nullSafeSet(ModelMapperProperties::getMatchingStrategy, cnf::setMatchingStrategy);
+                nullSafeSet(ModelMapperProperties::getFieldAccessLevel, cnf::setFieldAccessLevel);
+                nullSafeSet(ModelMapperProperties::getMethodAccessLevel, cnf::setMethodAccessLevel);
+                nullSafeSet(ModelMapperProperties::getFieldMatchingEnabled, cnf::setFieldMatchingEnabled);
+                nullSafeSet(ModelMapperProperties::getAmbiguityIgnored, cnf::setAmbiguityIgnored);
+                nullSafeSet(ModelMapperProperties::getFullTypeMatchingRequired, cnf::setFullTypeMatchingRequired);
+                nullSafeSet(ModelMapperProperties::getImplicitMatchingEnabled, cnf::setImplicitMappingEnabled);
+                nullSafeSet(ModelMapperProperties::getPreferNestedProperties, cnf::setPreferNestedProperties);
+                nullSafeSet(ModelMapperProperties::getSkipNullEnabled, cnf::setSkipNullEnabled);
+                nullSafeSet(ModelMapperProperties::getCollectionsMergeEnabled, cnf::setCollectionsMergeEnabled);
+                nullSafeSet(ModelMapperProperties::getDeepCopyEnabled, cnf::setDeepCopyEnabled);
+            });
         }
 
         private <T> void nullSafeSet(Function<ModelMapperProperties, T> property, Consumer<T> setter) {

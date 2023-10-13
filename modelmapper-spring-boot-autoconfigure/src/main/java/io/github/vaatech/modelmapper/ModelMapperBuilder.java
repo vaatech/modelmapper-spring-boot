@@ -115,34 +115,15 @@ public class ModelMapperBuilder {
      *                   applied in their registration order.
      */
     public ModelMapperBuilder postConfigurer(Consumer<ModelMapper> configurer) {
-        this.postConfigurer =
-                (this.postConfigurer != null ? this.postConfigurer.andThen(configurer) : configurer);
+        this.postConfigurer = (this.postConfigurer != null
+                ? this.postConfigurer.andThen(configurer)
+                : configurer);
         return this;
     }
 
     public <S, D> TypeMapConfigurer<S, D> typeMap(Class<S> source, Class<D> dest) {
         TypeMapConfigurer<S, D> typeMapConfigurer = new TypeMapConfigurer<>(source, dest);
         return apply(typeMapConfigurer);
-    }
-
-    public <S, D> ModelMapperBuilder converter(Converter<S, D> converter) {
-        ConverterConfigurer<S, D> converterConfigurer = new ConverterConfigurer<>();
-        converterConfigurer.with(converter);
-        apply(converterConfigurer);
-        return this;
-    }
-
-    public <S, D> ConverterConfigurer<S, D> converter(Class<S> sourceType, Class<D> destinationType) {
-        ConverterConfigurer<S, D> converterConfigurer = new ConverterConfigurer<>();
-        converterConfigurer.with(sourceType, destinationType);
-        return apply(converterConfigurer);
-    }
-
-    public <S, D> ModelMapperBuilder mappings(PropertyMap<S, D> propertyMap) {
-        PropertyMapConfigurer<S, D> propertyMapConfigurer = new PropertyMapConfigurer<>();
-        propertyMapConfigurer.with(propertyMap);
-        apply(propertyMapConfigurer);
-        return this;
     }
 
     public ModelMapperBuilder provider(Provider<?> provider) {

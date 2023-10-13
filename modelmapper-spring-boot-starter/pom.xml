@@ -5,13 +5,11 @@
     <parent>
         <artifactId>modelmapper-spring-boot-parent</artifactId>
         <groupId>io.github.vaatech.modelmapper</groupId>
-        <version>1.0.0</version>
+        <version>1.0.1-SNAPSHOT</version>
         <relativePath>../modelmapper-spring-boot-parent</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <packaging>pom</packaging>
-
     <artifactId>modelmapper-spring-boot-starter</artifactId>
 
     <properties>
@@ -29,7 +27,6 @@
         <dependency>
             <groupId>io.github.vaatech.modelmapper</groupId>
             <artifactId>modelmapper-spring-boot-autoconfigure</artifactId>
-            <version>${project.version}</version>
         </dependency>
     </dependencies>
 

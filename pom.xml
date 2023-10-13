@@ -6,7 +6,7 @@
 
     <artifactId>modelmapper-spring-boot</artifactId>
     <groupId>io.github.vaatech.modelmapper</groupId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <inceptionYear>2023</inceptionYear>

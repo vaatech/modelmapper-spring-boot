@@ -35,8 +35,7 @@ public class TypeMapConfigurer<S, D> extends ModelMapperConfigurer {
 
     /**
      * If {@code this.configuration} is present, it will be used to create the new type map and if
-     * there is one already created with the same source, destination and name it will throw an
-     * exception.
+     * there is one already created with the same source, destination and name it will throw an exception.
      *
      * @throws IllegalStateException if a TypeMap already exists for {@code sourceType} and {@code
      *                               destinationType}

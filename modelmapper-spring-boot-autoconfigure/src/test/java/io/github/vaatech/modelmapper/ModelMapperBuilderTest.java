@@ -51,13 +51,12 @@ public class ModelMapperBuilderTest {
                     .withUserConfiguration(TaskMappingsConfiguration.class)
                     .run(ctx -> {
                         ModelMapper modelMapper = TestHelper.getModelMapper(ctx);
-                        TaskDto request =
-                                TaskDto.builder()
-                                        .taskId(1L)
-                                        .name("Task 1 Updated")
-                                        .priority("CRITICAL")
-                                        .description("")
-                                        .build();
+                        TaskDto request = TaskDto.builder()
+                                .taskId(1L)
+                                .name("Task 1 Updated")
+                                .priority("CRITICAL")
+                                .description("")
+                                .build();
 
                         Task task = modelMapper.map(request, Task.class);
 
@@ -70,14 +69,13 @@ public class ModelMapperBuilderTest {
         @Configuration
         static class TaskMappingsConfiguration {
 
-            final Converter<TaskDto, Task> TASK_CREATE_REQUEST_TO_TASK_CONVERTER =
-                    context -> {
-                        TaskDto createRequest = context.getSource();
-                        Task task = context.getDestination();
-                        String description = createRequest.getDescription();
-                        task.setDescription(StringUtils.isBlank(description) ? null : description);
-                        return task;
-                    };
+            final Converter<TaskDto, Task> TASK_CREATE_REQUEST_TO_TASK_CONVERTER = context -> {
+                TaskDto createRequest = context.getSource();
+                Task task = context.getDestination();
+                String description = createRequest.getDescription();
+                task.setDescription(StringUtils.isBlank(description) ? null : description);
+                return task;
+            };
 
             @Bean
             ModelMapperBuilderCustomizer taskMappings() {
