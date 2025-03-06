@@ -49,7 +49,7 @@
     </modules>
 
     <properties>
-        <revision>1.0.0-SNAPSHOT</revision>
+        <revision>1.0.1-SNAPSHOT</revision>
         <modelmapper.version>3.2.2</modelmapper.version>
     </properties>
 
