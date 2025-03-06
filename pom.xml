@@ -12,11 +12,13 @@
     </parent>
 
     <artifactId>modelmapper-spring-boot</artifactId>
-    <groupId>com.github.vaatech.modelmapper</groupId>
+    <groupId>io.github.vaatech.modelmapper</groupId>
     <version>${revision}</version>
     <packaging>pom</packaging>
 
     <inceptionYear>2023</inceptionYear>
+
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>Spring Boot Support for ModelMapper</description>
     <url>http://github.com/vaatech/modelmapper-spring-boot</url>
 
@@ -29,14 +31,14 @@
 
     <developers>
         <developer>
-            <name>vaatech</name>
+            <name>Vasil Atanasov</name>
             <organization>vaatech</organization>
             <organizationUrl>https://github.com/vaatech</organizationUrl>
         </developer>
     </developers>
 
     <scm>
-        <url>http://github.com/vaatech/modelmapper-spring-boot</url>
+        <url>http://github.com/vaatech/modelmapper-spring-boot/tree/master</url>
         <connection>scm:git:git://github.com/vaatech/modelmapper-spring-boot.git</connection>
         <developerConnection>scm:git:ssh://github.com:vaatech/modelmapper-spring-boot.git</developerConnection>
     </scm>
@@ -64,7 +66,7 @@
                 <version>${modelmapper.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.github.vaatech.modelmapper</groupId>
+                <groupId>io.github.vaatech.modelmapper</groupId>
                 <artifactId>modelmapper-spring-boot-autoconfigure</artifactId>
                 <version>${project.version}</version>
             </dependency>

@@ -5,11 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>modelmapper-spring-boot</artifactId>
-        <groupId>com.github.vaatech.modelmapper</groupId>
+        <groupId>io.github.vaatech.modelmapper</groupId>
         <version>${revision}</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
+    <name>${project.groupId}:${project.artifactId}</name>
     <artifactId>modelmapper-spring-boot-starter</artifactId>
 
     <dependencies>
@@ -19,7 +20,7 @@
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.github.vaatech.modelmapper</groupId>
+            <groupId>io.github.vaatech.modelmapper</groupId>
             <artifactId>modelmapper-spring-boot-autoconfigure</artifactId>
         </dependency>
         <dependency>
