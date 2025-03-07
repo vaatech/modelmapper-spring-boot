@@ -160,41 +160,25 @@ public class ModelMapperBuilder {
         return (TypeMapConfigurer<S, D>) config;
     }
 
-    static class TypePair<S, D> {
-        private final Class<S> sourceType;
-        private final Class<D> destinationType;
-        private final String name;
-        private final int hashCode;
+    public record TypePair<S, D>(Class<S> sourceType,
+                                 Class<D> destinationType,
+                                 String name) {
 
-        private TypePair(Class<S> sourceType, Class<D> destinationType, String name) {
-            this.sourceType = sourceType;
-            this.destinationType = destinationType;
-            this.name = name;
-            hashCode = computeHashCode();
-        }
+        static <T1, T2> TypePair<T1, T2> of(final Class<T1> sourceType,
+                                            final Class<T2> destinationType,
+                                            final String name) {
 
-        static <T1, T2> TypePair<T1, T2> of(Class<T1> sourceType, Class<T2> destinationType, String name) {
             return new TypePair<>(sourceType, destinationType, name);
         }
 
         @Override
-        public boolean equals(Object other) {
-            if (other == this)
-                return true;
-            if (!(other instanceof TypePair<?, ?> otherPair))
-                return false;
-            if (name == null) {
-                if (otherPair.name != null)
-                    return false;
-            } else if (!name.equals(otherPair.name))
-                return false;
-            return sourceType.equals(otherPair.sourceType)
-                    && destinationType.equals(otherPair.destinationType);
-        }
-
-        @Override
-        public final int hashCode() {
-            return hashCode;
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + sourceType.hashCode();
+            result = prime * result + destinationType.hashCode();
+            result = prime * result + ((name == null) ? 0 : name.hashCode());
+            return result;
         }
 
         @Override
@@ -203,15 +187,6 @@ public class ModelMapperBuilder {
             if (name != null)
                 str += " as " + name;
             return str;
-        }
-
-        private int computeHashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + sourceType.hashCode();
-            result = prime * result + destinationType.hashCode();
-            result = prime * result + ((name == null) ? 0 : name.hashCode());
-            return result;
         }
     }
 }
