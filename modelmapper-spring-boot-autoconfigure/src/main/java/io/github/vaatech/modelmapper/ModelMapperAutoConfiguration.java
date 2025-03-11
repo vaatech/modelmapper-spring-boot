@@ -1,11 +1,14 @@
 package io.github.vaatech.modelmapper;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.Module;
 import org.modelmapper.*;
+import org.modelmapper.internal.InheritingConfiguration;
 import org.modelmapper.spring.SpringIntegration;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -15,6 +18,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Scope;
 
 @Slf4j
 @AutoConfiguration
@@ -24,12 +28,14 @@ import org.springframework.context.annotation.Import;
 public class ModelMapperAutoConfiguration {
 
     @Configuration(proxyBeanMethods = false)
+    @RequiredArgsConstructor
     @ConditionalOnClass(ModelMapper.class)
     static class ModelMapperConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(ModelMapper.class)
-        ModelMapper modelMapper(ModelMapperProperties properties, ModelMapperBuilder builder) {
+        ModelMapper modelMapper(final ModelMapperProperties properties,
+                                final ModelMapperBuilder builder) {
 
             log.info("Configure ModelMapper with ModelMapperAutoConfiguration.");
             final ModelMapper modelMapper = builder.build();
@@ -44,15 +50,25 @@ public class ModelMapperAutoConfiguration {
         }
 
         @Bean
-        @ConditionalOnMissingBean
-        ModelMapperBuilder
-        modelMapperBuilder(ModelMapperBuilderCustomizers customizers) {
-            final ModelMapperBuilder builder = ModelMapperBuilder.builder();
-            return customizers.customize(builder);
+        @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+        org.modelmapper.config.Configuration
+        typeMapConfiguration(final ObjectProvider<ConfigurationCustomizer> configurationCustomizers) {
+            var config = new InheritingConfiguration();
+            configurationCustomizers.orderedStream().forEach(customizer -> customizer.customize(config));
+            return config;
         }
 
         @Bean
         @ConditionalOnMissingBean
+        ModelMapperBuilder
+        modelMapperBuilder(final ModelMapperBuilderCustomizers customizers,
+                           final ObjectProvider<ConfigurationCustomizer> configurationCustomizers) {
+            final ModelMapperBuilder builder = ModelMapperBuilder.builder();
+            configurationCustomizers.orderedStream().forEach(builder::configuration);
+            return customizers.customize(builder);
+        }
+
+        @Bean
         ModelMapperBuilderCustomizers
         modelMapperBuilderCustomizers(ObjectProvider<ModelMapperBuilderCustomizer> customizers) {
             return new ModelMapperBuilderCustomizers(customizers);

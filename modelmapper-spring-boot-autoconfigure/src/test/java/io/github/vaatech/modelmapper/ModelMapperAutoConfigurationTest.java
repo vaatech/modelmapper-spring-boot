@@ -42,13 +42,13 @@ public class ModelMapperAutoConfigurationTest {
 
         @Test
         void whenContextLoadsStandardConfigurationShouldBeSet() {
-            var type = ResolvableType.forClassWithGenerics(Customizer.class, ModelMapperBuilder.class);
+            var type = ResolvableType.forClassWithGenerics(Customizer.class, Configuration.class);
             String[] beanNamesForType = BeanFactoryUtils
                     .beanNamesForTypeIncludingAncestors(beanFactory, type);
             assertThat(beanNamesForType)
                     .as("ModelMapperBuilderCustomized should be present")
                     .hasSize(1)
-                    .contains("standardModelMapperBuilderCustomizer");
+                    .contains("standardModelMapperConfigurationCustomizer");
         }
     }
 

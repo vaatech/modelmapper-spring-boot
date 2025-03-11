@@ -5,12 +5,12 @@ import org.modelmapper.TypeMap;
 import org.modelmapper.config.Configuration;
 import org.modelmapper.internal.util.Assert;
 
-public class TypeMapConfigurer<S, D> {
+class TypeMapConfigurer<S, D> {
 
     private final Class<S> sourceType;
     private final Class<D> destinationType;
     private String typeMapName;
-    private Customizer<Configuration> configurationCustomizer;
+    private Configuration configuration;
     private Customizer<TypeMap<S, D>> typeMapCustomizer;
 
     TypeMapConfigurer(Class<S> sourceType, Class<D> destinationType) {
@@ -20,7 +20,7 @@ public class TypeMapConfigurer<S, D> {
         this.destinationType = destinationType;
     }
 
-    public TypeMapConfigurer<S, D> name(String typeMapName) {
+    TypeMapConfigurer<S, D> name(String typeMapName) {
         if (this.typeMapName != null) {
             throw new IllegalStateException("TypeMap name already set");
         }
@@ -29,34 +29,26 @@ public class TypeMapConfigurer<S, D> {
         return this;
     }
 
-    public TypeMapConfigurer<S, D> configuration(Customizer<Configuration> configurationCustomizer) {
-        this.configurationCustomizer = (this.configurationCustomizer != null
-                ? this.configurationCustomizer.andThen(configurationCustomizer)
-                : configurationCustomizer);
+    TypeMapConfigurer<S, D> configuration(Configuration configuration) {
+        this.configuration = configuration;
         return this;
     }
 
-    public TypeMapConfigurer<S, D> customize(Customizer<TypeMap<S, D>> typeMapCustomizer) {
+    TypeMapConfigurer<S, D> typeMap(Customizer<TypeMap<S, D>> typeMapCustomizer) {
         this.typeMapCustomizer = (this.typeMapCustomizer != null
                 ? this.typeMapCustomizer.andThen(typeMapCustomizer)
                 : typeMapCustomizer);
         return this;
     }
 
-    /**
-     * If {@code this.configuration} is present, it will be used to create the new type map and if
-     * there is one already created with the same source, destination and name it will throw an exception.
-     */
     void configure(final ModelMapper modelMapper) {
         TypeMap<S, D> typeMap;
 
-        Configuration configuration = modelMapper.getConfiguration();
-        if (configurationCustomizer != null) {
-            configuration = configuration.copy();
-            configurationCustomizer.customize(configuration);
-        }
-
-        if (typeMapName == null) {
+        if (typeMapName == null && configuration == null) {
+            typeMap = modelMapper.createTypeMap(sourceType, destinationType);
+        } else if (configuration == null) {
+            typeMap = modelMapper.createTypeMap(sourceType, destinationType, typeMapName);
+        } else if (typeMapName == null) {
             typeMap = modelMapper.createTypeMap(sourceType, destinationType, configuration);
         } else {
             typeMap = modelMapper.createTypeMap(sourceType, destinationType, typeMapName, configuration);

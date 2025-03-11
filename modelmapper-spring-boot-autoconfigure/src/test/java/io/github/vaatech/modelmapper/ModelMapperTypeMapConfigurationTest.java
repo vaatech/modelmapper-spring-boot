@@ -13,11 +13,13 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.internal.InheritingConfiguration;
 
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import static io.github.vaatech.modelmapper.Customizer.withDefaults;
 import static io.github.vaatech.modelmapper.test.TestHelper.getModelMapper;
 import static io.github.vaatech.modelmapper.test.TestHelper.withModelMapperContext;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,11 +43,11 @@ class ModelMapperTypeMapConfigurationTest {
             static Stream<Arguments> builderCustomizersWithDuplicateTypeMaps() {
                 return Stream.of(
                         withArguments("[Task -> TaskDto]", () -> builder -> builder
-                                .typeMap(Task.class, TaskDto.class)
-                                .typeMap(Task.class, TaskDto.class)),
+                                .typeMapOf(Task.class, TaskDto.class)
+                                .typeMapOf(Task.class, TaskDto.class)),
                         withArguments("[Task -> TaskDto with Configuration]", () -> builder -> builder
-                                .typeMap(Task.class, TaskDto.class, config -> config.configuration(withDefaults()))
-                                .typeMap(Task.class, TaskDto.class)));
+                                .typeMapOf(Task.class, TaskDto.class, new InheritingConfiguration())
+                                .typeMapOf(Task.class, TaskDto.class)));
             }
 
             @ParameterizedTest(name = "{0}")
@@ -72,6 +74,34 @@ class ModelMapperTypeMapConfigurationTest {
                             assertThat(modelMapper.getTypeMaps()).hasSize(3);
                         });
             }
+
+            @Test
+            void whenTaskMappingsConfigurationLoadShouldSucceedMapping() {
+                withModelMapperContext()
+                        .withUserConfiguration(TaskMappingsConfiguration.class)
+                        .withBean(TaskService.class, TaskServiceImpl::new)
+                        .run(context -> {
+                            ModelMapper mapper = getModelMapper(context);
+
+
+                            TaskCreateRequest request = TaskCreateRequest.builder()
+                                    .name("Task 1")
+                                    .description("Task 1 Description")
+                                    .startDate(LocalDate.of(2025, Month.JANUARY, 15))
+                                    .endDate(LocalDate.of(2025, Month.JANUARY, 17))
+                                    .priority("MODERATE")
+                                    .build();
+
+                            Task task = mapper.map(request, Task.class);
+
+                            assertThat(task.getName()).isEqualTo(request.getName());
+                            assertThat(task.getDescription()).isEqualTo(request.getDescription());
+                            assertThat(task.getStartDate()).isEqualTo(request.getStartDate());
+                            assertThat(task.getEndDate()).isEqualTo(request.getEndDate());
+                            assertThat(task.getPriority().name()).isEqualTo(request.getPriority());
+                            assertThat(task.getCreatedAt()).isNotNull();
+                        });
+            }
         }
 
         @Nested
@@ -81,15 +111,15 @@ class ModelMapperTypeMapConfigurationTest {
             static Stream<Arguments> builderCustomizers() {
                 return Stream.of(
                         withArguments("[TaskCreateRequest -> TaskDto]", () -> builder -> builder
-                                .typeMap(TaskCreateRequest.class, TaskDto.class)),
+                                .typeMapOf(TaskCreateRequest.class, TaskDto.class)),
                         withArguments("[TaskCreateRequest -> Task]", () -> builder -> builder
-                                .typeMap(TaskCreateRequest.class, Task.class)));
+                                .typeMapOf(TaskCreateRequest.class, Task.class)));
             }
 
             static Stream<Arguments> builderCustomizersDuplicateTypeMapsWithConfiguration() {
                 return Stream.of(withArguments("[Task -> TaskDto with Configuration]", () -> builder -> builder
-                        .typeMap(Task.class, TaskDto.class)
-                        .typeMap(Task.class, TaskDto.class, config -> config.configuration(withDefaults()))));
+                        .typeMapOf(Task.class, TaskDto.class)
+                        .typeMapOf(Task.class, TaskDto.class, new InheritingConfiguration())));
             }
 
             @ParameterizedTest(name = "{0}")

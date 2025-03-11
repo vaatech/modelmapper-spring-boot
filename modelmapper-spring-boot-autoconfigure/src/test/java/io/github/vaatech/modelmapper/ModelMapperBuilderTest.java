@@ -84,13 +84,10 @@ public class ModelMapperBuilderTest {
 
             @Bean
             ModelMapperBuilderCustomizer taskMappings() {
-                return builder -> builder
-                        .typeMap(TaskDto.class, Task.class, config -> config
-                                .configuration(Customizer.withDefaults())
-                                .customize(typeMap -> typeMap
-                                        .addMapping(TaskDto::getTaskId, Task::setId)
-                                        .setProvider(TASK_PROVIDER)
-                                        .setPostConverter(TASK_CREATE_REQUEST_TO_TASK_CONVERTER)));
+                return builder -> builder.typeMapOf(TaskDto.class, Task.class, typeMap -> typeMap
+                        .addMapping(TaskDto::getTaskId, Task::setId)
+                        .setProvider(TASK_PROVIDER)
+                        .setPostConverter(TASK_CREATE_REQUEST_TO_TASK_CONVERTER));
             }
         }
     }

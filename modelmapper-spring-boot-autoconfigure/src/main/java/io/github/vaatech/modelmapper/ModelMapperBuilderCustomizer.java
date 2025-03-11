@@ -8,4 +8,5 @@ package io.github.vaatech.modelmapper;
  * @since 1.0.0
  */
 @FunctionalInterface
-public interface ModelMapperBuilderCustomizer extends Customizer<ModelMapperBuilder> {}
+public interface ModelMapperBuilderCustomizer extends Customizer<ModelMapperBuilder> {
+}

@@ -10,6 +10,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ModelMapperBuilder {
 
+    private static final String EMPTY_NAME = null;
+
     private final AtomicBoolean building = new AtomicBoolean();
     private final ModelMapper modelMapper;
     private final Configuration configuration;
@@ -50,32 +52,60 @@ public class ModelMapperBuilder {
     /**
      * Customize global configuration
      */
-    public ModelMapperBuilder configuration(Customizer<Configuration> customizer) {
+    ModelMapperBuilder configuration(Customizer<Configuration> customizer) {
         customizer.customize(configuration);
         return this;
     }
 
-    public <S, D> ModelMapperBuilder typeMap(final Class<S> source,
-                                             final Class<D> destination) {
-        return typeMap(source, destination, Customizer.withDefaults());
+    public <S, D> ModelMapperBuilder typeMapOf(final Class<S> source,
+                                               final Class<D> destination) {
+        return typeMapOf(source, destination, EMPTY_NAME, null, Customizer.withDefaults());
     }
 
-    public <S, D> ModelMapperBuilder typeMap(final Class<S> source,
-                                             final Class<D> destination,
-                                             final Customizer<TypeMapConfigurer<S, D>> customizer) {
-        return typeMap(source, destination, null, customizer);
+    public <S, D> ModelMapperBuilder typeMapOf(final Class<S> source,
+                                               final Class<D> destination,
+                                               final Customizer<TypeMap<S, D>> customizer) {
+        return typeMapOf(source, destination, EMPTY_NAME, null, customizer);
     }
 
-    public <S, D> ModelMapperBuilder typeMap(final Class<S> source,
-                                             final Class<D> destination,
-                                             final String typeMapName) {
-        return typeMap(source, destination, typeMapName, Customizer.withDefaults());
+    public <S, D> ModelMapperBuilder typeMapOf(final Class<S> source,
+                                               final Class<D> destination,
+                                               final Configuration configuration) {
+        return typeMapOf(source, destination, EMPTY_NAME, configuration, Customizer.withDefaults());
     }
 
-    public <S, D> ModelMapperBuilder typeMap(final Class<S> source,
-                                             final Class<D> destination,
-                                             final String typeMapName,
-                                             final Customizer<TypeMapConfigurer<S, D>> customizer) {
+    public <S, D> ModelMapperBuilder typeMapOf(final Class<S> source,
+                                               final Class<D> destination,
+                                               final Configuration configuration,
+                                               final Customizer<TypeMap<S, D>> customizer) {
+        return typeMapOf(source, destination, EMPTY_NAME, configuration, customizer);
+    }
+
+    public <S, D> ModelMapperBuilder typeMapOf(final Class<S> source,
+                                               final Class<D> destination,
+                                               final String typeMapName) {
+        return typeMapOf(source, destination, typeMapName, null, Customizer.withDefaults());
+    }
+
+    public <S, D> ModelMapperBuilder typeMapOf(final Class<S> source,
+                                               final Class<D> destination,
+                                               final String typeMapName,
+                                               final Customizer<TypeMap<S, D>> customizer) {
+        return typeMapOf(source, destination, typeMapName, null, customizer);
+    }
+
+    public <S, D> ModelMapperBuilder typeMapOf(final Class<S> source,
+                                               final Class<D> destination,
+                                               final String typeMapName,
+                                               final Configuration configuration) {
+        return typeMapOf(source, destination, typeMapName, configuration, Customizer.withDefaults());
+    }
+
+    public <S, D> ModelMapperBuilder typeMapOf(final Class<S> source,
+                                               final Class<D> destination,
+                                               final String typeMapName,
+                                               final Configuration configuration,
+                                               final Customizer<TypeMap<S, D>> customizer) {
 
         TypePair<S, D> typePair = TypePair.of(source, destination, typeMapName);
         TypeMapConfigurer<S, D> typeMapConfigurer =
@@ -85,9 +115,14 @@ public class ModelMapperBuilder {
             typeMapConfigurer.name(typeMapName);
         }
 
-        if (customizer != null) {
-            customizer.customize(typeMapConfigurer);
+        if (configuration != null) {
+            typeMapConfigurer.configuration(configuration);
         }
+
+        if (customizer != null) {
+            typeMapConfigurer.typeMap(customizer);
+        }
+
         return this;
     }
 
@@ -160,9 +195,9 @@ public class ModelMapperBuilder {
         return (TypeMapConfigurer<S, D>) config;
     }
 
-    public record TypePair<S, D>(Class<S> sourceType,
-                                 Class<D> destinationType,
-                                 String name) {
+    private record TypePair<S, D>(Class<S> sourceType,
+                                  Class<D> destinationType,
+                                  String name) {
 
         static <T1, T2> TypePair<T1, T2> of(final Class<T1> sourceType,
                                             final Class<T2> destinationType,
