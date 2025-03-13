@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.modelmapper.ModelMapper;
 import org.modelmapper.Provider;
 import org.modelmapper.config.Configuration;
 import org.modelmapper.convention.MatchingStrategies;
@@ -12,20 +13,61 @@ import org.modelmapper.convention.NameTransformers;
 import org.modelmapper.convention.NamingConventions;
 import org.modelmapper.spi.MatchingStrategy;
 import org.springframework.beans.factory.BeanFactoryUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.core.ResolvableType;
 import org.springframework.test.context.TestPropertySource;
 
+import static io.github.vaatech.modelmapper.ApplicationContextRunnerHelper.getConfiguration;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ModelMapperAutoConfigurationTest {
+public class ModelMapperPropertiesTest {
+
+    @SpringBootTest(
+            classes = BaseModelMapperTest.TestConfiguration.class,
+            properties = {
+                    "spring.main.banner-mode=off",
+            })
+    @DisplayName("Default AutoConfigured ModelMapper")
+    abstract static class BaseModelMapperTest {
+
+        @Autowired
+        protected ConfigurableListableBeanFactory beanFactory;
+
+        @Autowired
+        protected ModelMapper modelMapper;
+
+        @Autowired
+        protected ModelMapperProperties properties;
+
+        @Test
+        void shouldConfiguredModelMapper() {
+            assertThat(modelMapper).isNotNull();
+            assertThat(properties).isNotNull();
+
+            String[] beanNamesForType =
+                    BeanFactoryUtils.beanNamesForTypeIncludingAncestors(beanFactory, ModelMapper.class);
+            assertThat(beanNamesForType)
+                    .as("Auto-configured modelMapper should be present")
+                    .hasSize(1)
+                    .contains("modelMapper");
+        }
+
+        @EnableAutoConfiguration
+        @org.springframework.context.annotation.Configuration
+        static class TestConfiguration {
+        }
+    }
 
     abstract static class BaseModelMapperMatchingStrategyTest extends BaseModelMapperTest {
 
         @Test
         void assertMappingStrategy() {
-            MatchingStrategy matchingStrategy = modelMapper.getConfiguration().getMatchingStrategy();
+            MatchingStrategy matchingStrategy = getConfiguration(modelMapper).getMatchingStrategy();
             assertMatchingStrategySet(matchingStrategy);
         }
 
@@ -78,33 +120,32 @@ public class ModelMapperAutoConfigurationTest {
     }
 
     @Nested
-    @TestPropertySource(
-            properties = {
-                    "modelmapper.source-name-tokenizer=Camel Case",
-                    "modelmapper.source-name-transformer=Javabeans Accessor",
-                    "modelmapper.source-naming-convention=Javabeans Accessor",
-                    "modelmapper.destination-name-tokenizer=Camel Case",
-                    "modelmapper.destination-name-transformer=Javabeans Accessor",
-                    "modelmapper.destination-naming-convention=Javabeans Accessor",
-                    "modelmapper.matching-strategy=Loose",
-                    "modelmapper.field-access-level=public",
-                    "modelmapper.method-access-level=public",
-                    "modelmapper.field-matching-enabled=true",
-                    "modelmapper.ambiguity-ignored=true",
-                    "modelmapper.full-type-matching-required=true",
-                    "modelmapper.implicit-matching-enabled=true",
-                    "modelmapper.skip-null-enabled=true",
-                    "modelmapper.collections-merge-enabled=true",
-                    "modelmapper.deep-copy-enabled=true",
-                    "modelmapper.spring-provider-enabled=true",
-                    "modelmapper.validate-enabled=true"
-            })
+    @TestPropertySource(properties = {
+            "modelmapper.source-name-tokenizer=Camel Case",
+            "modelmapper.source-name-transformer=Javabeans Accessor",
+            "modelmapper.source-naming-convention=Javabeans Accessor",
+            "modelmapper.destination-name-tokenizer=Camel Case",
+            "modelmapper.destination-name-transformer=Javabeans Accessor",
+            "modelmapper.destination-naming-convention=Javabeans Accessor",
+            "modelmapper.matching-strategy=Loose",
+            "modelmapper.field-access-level=public",
+            "modelmapper.method-access-level=public",
+            "modelmapper.field-matching-enabled=true",
+            "modelmapper.ambiguity-ignored=true",
+            "modelmapper.full-type-matching-required=true",
+            "modelmapper.implicit-matching-enabled=true",
+            "modelmapper.skip-null-enabled=true",
+            "modelmapper.collections-merge-enabled=true",
+            "modelmapper.deep-copy-enabled=true",
+            "modelmapper.spring-provider-enabled=true",
+            "modelmapper.validate-enabled=true"
+    })
     @DisplayName("Property Test Case 1 with All Properties Set")
     class PropertiesTest1 extends BaseModelMapperPropertyTest {
 
         @Test
         void shouldSetProperties(CapturedOutput output) {
-            Configuration configuration = modelMapper.getConfiguration();
+            Configuration configuration = getConfiguration(modelMapper);
             assertThat(configuration.getSourceNameTokenizer()).isEqualTo(NameTokenizers.CAMEL_CASE);
             assertThat(configuration.getSourceNameTransformer()).isEqualTo(NameTransformers.JAVABEANS_ACCESSOR);
             assertThat(configuration.getSourceNamingConvention()).isEqualTo(NamingConventions.JAVABEANS_ACCESSOR);
@@ -135,32 +176,31 @@ public class ModelMapperAutoConfigurationTest {
     }
 
     @Nested
-    @TestPropertySource(
-            properties = {
-                    "modelmapper.source-name-tokenizer=Underscore",
-                    "modelmapper.source-name-transformer=Javabeans Mutator",
-                    "modelmapper.source-naming-convention=Javabeans Mutator",
-                    "modelmapper.destination-name-tokenizer=Underscore",
-                    "modelmapper.destination-name-transformer=Javabeans Mutator",
-                    "modelmapper.destination-naming-convention=Javabeans Mutator",
-                    "modelmapper.matching-strategy=Standard",
-                    "modelmapper.field-access-level=protected",
-                    "modelmapper.method-access-level=protected",
-                    "modelmapper.field-matching-enabled=false",
-                    "modelmapper.ambiguity-ignored=false",
-                    "modelmapper.full-type-matching-required=false",
-                    "modelmapper.implicit-matching-enabled=false",
-                    "modelmapper.skip-null-enabled=false",
-                    "modelmapper.collections-merge-enabled=false",
-                    "modelmapper.deep-copy-enabled=false",
-                    "modelmapper.spring-provider-enabled=false"
-            })
+    @TestPropertySource(properties = {
+            "modelmapper.source-name-tokenizer=Underscore",
+            "modelmapper.source-name-transformer=Javabeans Mutator",
+            "modelmapper.source-naming-convention=Javabeans Mutator",
+            "modelmapper.destination-name-tokenizer=Underscore",
+            "modelmapper.destination-name-transformer=Javabeans Mutator",
+            "modelmapper.destination-naming-convention=Javabeans Mutator",
+            "modelmapper.matching-strategy=Standard",
+            "modelmapper.field-access-level=protected",
+            "modelmapper.method-access-level=protected",
+            "modelmapper.field-matching-enabled=false",
+            "modelmapper.ambiguity-ignored=false",
+            "modelmapper.full-type-matching-required=false",
+            "modelmapper.implicit-matching-enabled=false",
+            "modelmapper.skip-null-enabled=false",
+            "modelmapper.collections-merge-enabled=false",
+            "modelmapper.deep-copy-enabled=false",
+            "modelmapper.spring-provider-enabled=false"
+    })
     @DisplayName("Property Test Case 2 with All Properties Set")
     class PropertiesTest2 extends BaseModelMapperPropertyTest {
 
         @Test
         void shouldSetProperties(CapturedOutput output) {
-            Configuration configuration = modelMapper.getConfiguration();
+            Configuration configuration = getConfiguration(modelMapper);
             assertThat(configuration.getSourceNameTokenizer()).isEqualTo(NameTokenizers.UNDERSCORE);
             assertThat(configuration.getSourceNameTransformer()).isEqualTo(NameTransformers.JAVABEANS_MUTATOR);
             assertThat(configuration.getSourceNamingConvention()).isEqualTo(NamingConventions.JAVABEANS_MUTATOR);
@@ -184,18 +224,17 @@ public class ModelMapperAutoConfigurationTest {
     }
 
     @Nested
-    @TestPropertySource(
-            properties = {
-                    "modelmapper.source-naming-convention=None",
-                    "modelmapper.destination-naming-convention=None",
-                    "modelmapper.matching-strategy=Strict"
-            })
+    @TestPropertySource(properties = {
+            "modelmapper.source-naming-convention=None",
+            "modelmapper.destination-naming-convention=None",
+            "modelmapper.matching-strategy=Strict"
+    })
     @DisplayName("Property Test Case 3 with Partial Properties Set")
     class PropertiesTest3 extends BaseModelMapperPropertyTest {
 
         @Test
         void shouldSetProperties() {
-            Configuration configuration = modelMapper.getConfiguration();
+            Configuration configuration = getConfiguration(modelMapper);
             assertThat(configuration.getSourceNamingConvention()).isEqualTo(NamingConventions.NONE);
             assertThat(configuration.getDestinationNamingConvention()).isEqualTo(NamingConventions.NONE);
             assertThat(configuration.getMatchingStrategy()).isEqualTo(MatchingStrategies.STRICT);
@@ -203,19 +242,18 @@ public class ModelMapperAutoConfigurationTest {
     }
 
     @Nested
-    @TestPropertySource(
-            properties = {
-                    "modelmapper.source-name-tokenizer=",
-                    "modelmapper.source-name-transformer=",
-                    "modelmapper.source-naming-convention=",
-                    "modelmapper.matching-strategy="
-            })
+    @TestPropertySource(properties = {
+            "modelmapper.source-name-tokenizer=",
+            "modelmapper.source-name-transformer=",
+            "modelmapper.source-naming-convention=",
+            "modelmapper.matching-strategy="
+    })
     @DisplayName("Property Test Case 4 with Partial Properties Set")
     class PropertiesTest4 extends BaseModelMapperPropertyTest {
 
         @Test
         void shouldSetProperties() {
-            Configuration configuration = modelMapper.getConfiguration();
+            Configuration configuration = getConfiguration(modelMapper);
             assertThat(configuration.getSourceNameTokenizer()).isEqualTo(NameTokenizers.CAMEL_CASE);
             assertThat(configuration.getSourceNameTransformer()).isEqualTo(NameTransformers.JAVABEANS_ACCESSOR);
             assertThat(configuration.getSourceNamingConvention()).isEqualTo(NamingConventions.JAVABEANS_ACCESSOR);
@@ -224,19 +262,18 @@ public class ModelMapperAutoConfigurationTest {
     }
 
     @Nested
-    @TestPropertySource(
-            properties = {
-                    "modelmapper.source-name-tokenizer=invalid",
-                    "modelmapper.source-name-transformer=invalid",
-                    "modelmapper.source-naming-convention=invalid",
-                    "modelmapper.matching-strategy=invalid"
-            })
+    @TestPropertySource(properties = {
+            "modelmapper.source-name-tokenizer=invalid",
+            "modelmapper.source-name-transformer=invalid",
+            "modelmapper.source-naming-convention=invalid",
+            "modelmapper.matching-strategy=invalid"
+    })
     @DisplayName("Property Test Case 5 with Invalid Properties Set")
     class PropertiesTest5 extends BaseModelMapperPropertyTest {
 
         @Test
         void shouldSetProperties(CapturedOutput output) {
-            Configuration configuration = modelMapper.getConfiguration();
+            Configuration configuration = getConfiguration(modelMapper);
             assertThat(configuration.getSourceNameTokenizer()).isEqualTo(NameTokenizers.CAMEL_CASE);
             assertThat(configuration.getSourceNameTransformer()).isEqualTo(NameTransformers.JAVABEANS_ACCESSOR);
             assertThat(configuration.getSourceNamingConvention()).isEqualTo(NamingConventions.JAVABEANS_ACCESSOR);

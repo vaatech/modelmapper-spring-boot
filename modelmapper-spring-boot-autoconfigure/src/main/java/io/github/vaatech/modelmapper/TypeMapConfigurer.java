@@ -21,9 +21,6 @@ class TypeMapConfigurer<S, D> {
     }
 
     TypeMapConfigurer<S, D> name(String typeMapName) {
-        if (this.typeMapName != null) {
-            throw new IllegalStateException("TypeMap name already set");
-        }
         Assert.notNull(typeMapName, "typeMapName");
         this.typeMapName = typeMapName;
         return this;

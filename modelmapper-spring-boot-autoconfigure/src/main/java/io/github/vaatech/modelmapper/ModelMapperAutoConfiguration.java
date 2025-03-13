@@ -1,6 +1,5 @@
 package io.github.vaatech.modelmapper;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.Module;
 import org.modelmapper.*;
@@ -25,10 +24,9 @@ import org.springframework.context.annotation.Scope;
 @ConditionalOnClass(ModelMapper.class)
 @EnableConfigurationProperties(ModelMapperProperties.class)
 @Import({ModelMapperPropertiesConfiguration.class, ModelMapperBuilderStandardConfiguration.class})
-public class ModelMapperAutoConfiguration {
+class ModelMapperAutoConfiguration {
 
     @Configuration(proxyBeanMethods = false)
-    @RequiredArgsConstructor
     @ConditionalOnClass(ModelMapper.class)
     static class ModelMapperConfiguration {
 
@@ -45,7 +43,7 @@ public class ModelMapperAutoConfiguration {
                 log.info("Validate ModelMapper Configuration succeed.");
             }
 
-            loggingConfiguration(modelMapper);
+            Mapper.INSTANCE.setMapper(modelMapper);
             return modelMapper;
         }
 
@@ -117,34 +115,5 @@ public class ModelMapperAutoConfiguration {
         Provider<?> springProvider(BeanFactory beanFactory) {
             return SpringIntegration.fromSpring(beanFactory);
         }
-    }
-
-    private static void loggingConfiguration(ModelMapper modelMapper) {
-        org.modelmapper.config.Configuration configuration = modelMapper.getConfiguration();
-        log.debug("ModelMapper Configuration =======================================================");
-        log.debug(" SourceNameTokenizer : {}", configuration.getSourceNameTokenizer());
-        log.debug(" SourceNameTransformer : {}", configuration.getSourceNameTransformer());
-        log.debug(" SourceNamingConvention : {}", configuration.getSourceNamingConvention());
-        log.debug(" DestinationNameTokenizer : {}", configuration.getDestinationNameTokenizer());
-        log.debug(" DestinationNameTransformer : {}", configuration.getDestinationNameTransformer());
-        log.debug(" DestinationNamingConvention : {}", configuration.getDestinationNamingConvention());
-        log.debug(" MatchingStrategy : {}", configuration.getMatchingStrategy());
-        log.debug(" FieldAccessLevel : {}", configuration.getFieldAccessLevel());
-        log.debug(" MethodAccessLevel : {}", configuration.getMethodAccessLevel());
-        log.debug(" FieldMatchingEnabled : {}", configuration.isFieldMatchingEnabled());
-        log.debug(" AmbiguityIgnored : {}", configuration.isAmbiguityIgnored());
-        log.debug(" FullTypeMatchingRequired : {}", configuration.isFullTypeMatchingRequired());
-        log.debug(" ImplicitMappingEnabled : {}", configuration.isImplicitMappingEnabled());
-        log.debug(" SkipNullEnabled : {}", configuration.isSkipNullEnabled());
-        log.debug(" CollectionsMergeEnabled : {}", configuration.isCollectionsMergeEnabled());
-        log.debug(" UseOSGiClassLoaderBridging : {}", configuration.isUseOSGiClassLoaderBridging());
-        log.debug(" DeepCopyEnabled : {}", configuration.isDeepCopyEnabled());
-        log.debug(" Provider : {}", configuration.getProvider());
-        log.debug(" PropertyCondition : {}", configuration.getPropertyCondition());
-        log.debug(" TypeMaps :");
-        modelMapper.getTypeMaps().forEach(typeMap -> log.debug("  {}", typeMap));
-        log.debug(" Converters :");
-        configuration.getConverters().forEach(converter -> log.debug("  {}", converter));
-        log.debug("ModelMapper Configuration =======================================================");
     }
 }
