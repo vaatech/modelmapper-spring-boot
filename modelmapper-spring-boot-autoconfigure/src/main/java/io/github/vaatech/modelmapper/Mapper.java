@@ -1,9 +1,8 @@
 package io.github.vaatech.modelmapper;
 
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
 
-import java.util.List;
+import java.lang.reflect.Type;
 import java.util.Objects;
 
 public enum Mapper {
@@ -23,25 +22,44 @@ public enum Mapper {
         return mapper;
     }
 
-    public <S, D> D map(S entity, Class<D> outClass) {
-        Objects.requireNonNull(entity, "Source object must not be null");
-        Objects.requireNonNull(outClass, "Destination type must not be null");
-
-        return getMapper().map(entity, outClass);
+    public <S, D> D map(S source, Class<D> destinationType) {
+        Objects.requireNonNull(source, "source");
+        Objects.requireNonNull(destinationType, "destinationType");
+        return getMapper().map(source, destinationType);
     }
 
-    public <S, D> List<D> map(List<S> source) {
-        Objects.requireNonNull(source, "Source object must not be null");
-
-        return getMapper().map(source, new TypeToken<>() {}.getType());
+    public <D> D map(Object source, Class<D> destinationType, String typeMapName) {
+        Objects.requireNonNull(source, "source");
+        Objects.requireNonNull(destinationType, "destinationType");
+        Objects.requireNonNull(typeMapName, "typeMapName");
+        return getMapper().map(source, destinationType, typeMapName);
     }
 
-    public <S, D> D map(S entity, D destination) {
-        Objects.requireNonNull(entity, "Source object must not be null");
-        Objects.requireNonNull(destination, "Destination object must not be null");
-
-        getMapper().map(entity, destination);
-
+    public <S, D> D map(S source, D destination) {
+        Objects.requireNonNull(source, "source");
+        Objects.requireNonNull(destination, "destination");
+        getMapper().map(source, destination);
         return destination;
+    }
+
+    public <S, D> D map(S source, D destination, String typeMapName) {
+        Objects.requireNonNull(source, "source");
+        Objects.requireNonNull(destination, "destination");
+        Objects.requireNonNull(typeMapName, "typeMapName");
+        getMapper().map(source, destination, typeMapName);
+        return destination;
+    }
+
+    public <D> D map(Object source, Type destinationType) {
+        Objects.requireNonNull(source, "source");
+        Objects.requireNonNull(destinationType, "destinationType");
+        return getMapper().map(source, destinationType);
+    }
+
+    public <D> D map(Object source, Type destinationType, String typeMapName) {
+        Objects.requireNonNull(source, "source");
+        Objects.requireNonNull(destinationType, "destinationType");
+        Objects.requireNonNull(typeMapName, "typeMapName");
+        return getMapper().map(source, destinationType, typeMapName);
     }
 }
