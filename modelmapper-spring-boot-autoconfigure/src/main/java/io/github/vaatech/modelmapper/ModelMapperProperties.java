@@ -38,4 +38,5 @@ public class ModelMapperProperties {
     private Boolean deepCopyEnabled = Boolean.FALSE;
     private Boolean validateEnabled = Boolean.FALSE;
     private Boolean springProviderEnabled = Boolean.FALSE;
+    private Boolean lockedEnabled = Boolean.TRUE;
 }

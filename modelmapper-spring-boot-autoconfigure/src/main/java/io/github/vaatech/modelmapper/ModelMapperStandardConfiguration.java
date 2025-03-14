@@ -9,7 +9,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 @Configuration(proxyBeanMethods = false)
-class ModelMapperBuilderStandardConfiguration {
+class ModelMapperStandardConfiguration {
 
     @Bean
     StandardModelMapperConfigurationCustomizer

@@ -51,6 +51,7 @@
     <properties>
         <revision>1.0.2-SNAPSHOT</revision>
         <modelmapper.version>3.2.2</modelmapper.version>
+        <modelmapper-module-record.version>1.0.0</modelmapper-module-record.version>
     </properties>
 
     <dependencyManagement>
@@ -64,6 +65,11 @@
                 <groupId>org.modelmapper.extensions</groupId>
                 <artifactId>modelmapper-spring</artifactId>
                 <version>${modelmapper.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.modelmapper</groupId>
+                <artifactId>modelmapper-module-record</artifactId>
+                <version>${modelmapper-module-record.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.vaatech.modelmapper</groupId>

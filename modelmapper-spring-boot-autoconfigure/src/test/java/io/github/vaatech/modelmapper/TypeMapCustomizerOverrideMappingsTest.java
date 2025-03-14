@@ -3,6 +3,7 @@ package io.github.vaatech.modelmapper;
 import io.github.vaatech.modelmapper.test.model.task.Task;
 import io.github.vaatech.modelmapper.test.model.task.TaskCreateRequest;
 import io.github.vaatech.modelmapper.test.model.task.TaskDto;
+import io.github.vaatech.modelmapper.test.model.task.TaskPriority;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.util.StringUtils;
 import org.modelmapper.Converter;
@@ -34,7 +35,7 @@ public class TypeMapCustomizerOverrideMappingsTest {
                             .description("Task 1 Description")
                             .startDate(LocalDate.of(2025, Month.JANUARY, 15))
                             .endDate(LocalDate.of(2025, Month.JANUARY, 17))
-                            .priority("MODERATE")
+                            .priority("30")
                             .build();
 
                     Task task = mapper.map(request, Task.class);
@@ -43,14 +44,13 @@ public class TypeMapCustomizerOverrideMappingsTest {
                     assertThat(task.getDescription()).isEqualTo(request.getDescription());
                     assertThat(task.getStartDate()).isEqualTo(request.getStartDate());
                     assertThat(task.getEndDate()).isEqualTo(request.getEndDate());
-                    assertThat(task.getPriority().name()).isEqualTo(request.getPriority());
+                    assertThat(String.valueOf(task.getPriority().level())).isEqualTo(request.getPriority());
                     assertThat(task.getCreatedAt()).isNotNull();
                 });
     }
 
     @Configuration
     static class TaskMappingsConfiguration {
-
 
         @Bean
         ModelMapperBuilderCustomizer taskToTaskDtoMappings() {
@@ -77,6 +77,16 @@ public class TypeMapCustomizerOverrideMappingsTest {
             return StringUtils.isBlank(description) ? null : description;
         };
 
+        static final Converter<String, TaskPriority> PRIORITY_CONVERTER = context -> {
+            String source = context.getSource();
+            try {
+                Integer level = Integer.parseInt(source);
+                return TaskPriority.valueOf(level);
+            } catch (NumberFormatException e) {
+                return TaskPriority.valueOf(source);
+            }
+        };
+
         @Bean
         @Order(5)
         ModelMapperBuilderCustomizer taskCreateRequestToTaskMappings() {
@@ -86,6 +96,7 @@ public class TypeMapCustomizerOverrideMappingsTest {
                     mapper.skip(Task::setCreatedAt);
                     mapper.skip(Task::setId);
                     mapper.using(DESCRIPTION_CONVERTER).map(TaskCreateRequest::getDescription, Task::setDescription);
+                    mapper.using(PRIORITY_CONVERTER).map(TaskCreateRequest::getPriority, Task::setPriority);
                 });
             });
         }

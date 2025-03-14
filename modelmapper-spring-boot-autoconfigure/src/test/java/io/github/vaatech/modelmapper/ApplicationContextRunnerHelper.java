@@ -28,6 +28,14 @@ class ApplicationContextRunnerHelper {
         return modelMapper;
     }
 
+    static Configuration getConfiguration(AssertableApplicationContext context) {
+        ModelMapper modelMapper = getModelMapper(context);
+        if (modelMapper instanceof ImmutableModelMapper mapper) {
+            return mapper.getConfig();
+        }
+        return modelMapper.getConfiguration();
+    }
+
     static Configuration getConfiguration(ModelMapper modelMapper) {
         if (modelMapper instanceof ImmutableModelMapper mapper) {
             return mapper.getConfig();

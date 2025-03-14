@@ -89,7 +89,7 @@ public class ModelMapperPropertiesTest {
                     .beanNamesForTypeIncludingAncestors(beanFactory, type);
             assertThat(beanNamesForType)
                     .as("ModelMapperBuilderCustomized should be present")
-                    .hasSize(1)
+                    .hasSizeGreaterThan(1)
                     .contains("standardModelMapperConfigurationCustomizer");
         }
     }

@@ -18,8 +18,6 @@ public class ModelMapperBuilder {
     private final ModelMapper modelMapper;
     private final Configuration configuration;
     private final Map<TypePair<?, ?>, TypeMapConfigurer<?, ?>> configurers = new LinkedHashMap<>();
-    private Provider<?> provider;
-    private Condition<?, ?> condition;
     private final List<Converter<?, ?>> converters = new ArrayList<>();
     private final List<Module> modules = new ArrayList<>();
 
@@ -128,16 +126,6 @@ public class ModelMapperBuilder {
         return this;
     }
 
-    public ModelMapperBuilder provider(Provider<?> provider) {
-        this.provider = provider;
-        return this;
-    }
-
-    public <S, D> ModelMapperBuilder condition(Condition<S, D> condition) {
-        this.condition = condition;
-        return this;
-    }
-
     public <S, D> ModelMapperBuilder converter(Converter<S, D> converter) {
         this.converters.add(converter);
         return this;
@@ -150,14 +138,6 @@ public class ModelMapperBuilder {
 
     private ModelMapper doBuild() {
 
-        if (provider != null) {
-            modelMapper.getConfiguration().setProvider(provider);
-        }
-
-        if (condition != null) {
-            modelMapper.getConfiguration().setPropertyCondition(condition);
-        }
-
         Collection<TypeMapConfigurer<?, ?>> configurers = this.configurers.values();
         for (TypeMapConfigurer<?, ?> configurer : configurers) {
             configurer.configure(this.modelMapper);
@@ -167,7 +147,7 @@ public class ModelMapperBuilder {
         this.modules.forEach(modelMapper::registerModule);
 
         loggingConfiguration(modelMapper);
-        return new ImmutableModelMapper(modelMapper);
+        return modelMapper;
     }
 
     private <S, D> TypeMapConfigurer<S, D> getOrAdd(final TypePair<S, D> typePair,

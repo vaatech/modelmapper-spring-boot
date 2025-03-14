@@ -68,6 +68,10 @@
     {
       "name": "modelmapper.source-naming-convention",
       "defaultValue": "Javabeans Accessor"
+    },
+    {
+      "name": "modelmapper.locked-enabled",
+      "defaultValue": true
     }
   ],
   "hints": [

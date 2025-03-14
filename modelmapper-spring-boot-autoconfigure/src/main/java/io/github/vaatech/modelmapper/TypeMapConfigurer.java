@@ -42,9 +42,9 @@ class TypeMapConfigurer<S, D> {
         TypeMap<S, D> typeMap;
 
         if (typeMapName == null && configuration == null) {
-            typeMap = modelMapper.createTypeMap(sourceType, destinationType);
+            typeMap = modelMapper.typeMap(sourceType, destinationType);
         } else if (configuration == null) {
-            typeMap = modelMapper.createTypeMap(sourceType, destinationType, typeMapName);
+            typeMap = modelMapper.typeMap(sourceType, destinationType, typeMapName);
         } else if (typeMapName == null) {
             typeMap = modelMapper.createTypeMap(sourceType, destinationType, configuration);
         } else {

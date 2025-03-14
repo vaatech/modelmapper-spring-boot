@@ -27,7 +27,7 @@ public enum TaskPriority {
         return ALL_VALUES.get(value);
     }
 
-    public Integer getLevel() {
+    public Integer level() {
         return level;
     }
 }
